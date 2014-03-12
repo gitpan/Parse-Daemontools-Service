@@ -5,7 +5,7 @@ use warnings;
 use 5.008_005;
 use bigint;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Carp;
 
@@ -112,12 +112,16 @@ sub status {
         }
     }
 
+    my $start_at = tai642unix($when);
+    $start_at = $start_at->numify if ref($start_at) && $start_at->can('numify');
+    $elapse   = $elapse->numify   if ref($elapse)   && $elapse->can('numify');
+
     return {
         service  => $service_dir,
         status   => defined $pid ? 'up' : 'down',
         pid      => $pid,
         seconds  => $elapse,
-        start_at => tai642unix($when),
+        start_at => $start_at,
         info     => join(", ", @info),
         env      => $env,
     };
